@@ -1,25 +1,25 @@
-var logEmptyMessage = "USAGE: node search [EXT] [TEXT]";
-var notFoundMessage = "No file was found";
-var args = process.argv.slice(2); //returns logs after exe command 'params'
-var flag = 0; //turn on if string was found
+
+const path = require('path');
+const fs = require('fs');
+
+const logWrongUsageMessage = "USAGE: node search [EXT] [TEXT]";
+const notFoundMessage = "No file was found";
+var args = process.argv.slice(2); //returns logs 'params', after exe command.
+var stringNotFoundFlag = 0; //turn on if string was found
 
 //validation - correct input
-if(args.length === 0 || args.length === 1){
-    console.log(logEmptyMessage);
+if(process.argv.length !== 4){
+    console.log(logWrongUsageMessage);
     return;
 }
 
 var fileExtension = "." + args[0];
 var stringToCheck = args[1];
-var currentDirection = `${process.cwd()}`; //current direction
 
-var path = require('path');
-var fs = require('fs'); // fs module provides an API for interacting with the file system
-
-fromDir(currentDirection, fileExtension);
+fromDir(__dirname, fileExtension); // __dirname - current directory
 
 //check if string not found
-if(flag === 0){
+if(stringNotFoundFlag === 0){
     console.log(notFoundMessage);
     return;
 }
@@ -41,12 +41,13 @@ function fromDir(startPath , filter){
         if(fs.lstatSync(filename).isDirectory()){ //Returns true if the fs.Stats Object describes a file system directory.
             fromDir(filename , filter); //recurse
         }
-        else if (filename.indexOf(filter) >= 0) { //Returns true is file extension is a correct filter.
+        else if (filename.indexOf(filter) >= 0) { //Returns true is file extension is a current filter.
 
             var fileData = fs.readFileSync(files[i]);
             if(fileData.includes(stringToCheck)) {
+             //   console.log(path.isAbsolute(filename)); //true if current path is absolute
                 console.log(filename);
-                flag = 1;
+                stringNotFoundFlag = 1;
             }
         }
     }
