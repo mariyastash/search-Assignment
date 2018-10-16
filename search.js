@@ -8,7 +8,7 @@ var args = process.argv.slice(2); //returns logs 'params', after exe command.
 var stringNotFoundFlag = 0; //turn on if string was found
 
 //validation - correct input
-if(process.argv.length !== 4){
+if(args.length !== 2){
     console.log(logWrongUsageMessage);
     return;
 }
@@ -36,17 +36,16 @@ function fromDir(startPath , filter){
 
     var files = fs.readdirSync(startPath);
     for(var i = 0; i < files.length; i++){
-        var filename = path.join(startPath , files[i]);
+        var fullPath = path.join(startPath , files[i]);
 
-        if(fs.lstatSync(filename).isDirectory()){ //Returns true if the fs.Stats Object describes a file system directory.
-            fromDir(filename , filter); //recurse
+        if(fs.lstatSync(fullPath).isDirectory()){ //Returns true if the fs.lstatSync Object describes a file system directory.
+            fromDir(fullPath , filter); //recurse
         }
-        else if (filename.indexOf(filter) >= 0) { //Returns true is file extension is a current filter.
-
-            var fileData = fs.readFileSync(files[i]);
+        else if (fullPath.indexOf(filter) >= 0) { //Returns true is file extension is a current filter.
+            var fileData = fs.readFileSync(fullPath);
             if(fileData.includes(stringToCheck)) {
-             //   console.log(path.isAbsolute(filename)); //true if current path is absolute
-                console.log(filename);
+             //   console.log(path.isAbsolute(fullPath)); //true if current path is absolute
+                console.log(fullPath);
                 stringNotFoundFlag = 1;
             }
         }
